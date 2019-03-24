@@ -1,75 +1,24 @@
 package legofy
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+)
 
-const LEGOS string = `{
-    'solid': {
-        '024': [0xfe, 0xc4, 0x01],
-        '106': [0xe7, 0x64, 0x19],
-        '021': [0xde, 0x01, 0x0e],
-        '221': [0xde, 0x38, 0x8b],
-        '023': [0x01, 0x58, 0xa8],
-        '028': [0x01, 0x7c, 0x29],
-        '119': [0x95, 0xb9, 0x0c],
-        '192': [0x5c, 0x1d, 0x0d],
-        '018': [0xd6, 0x73, 0x41],
-        '001': [0xf4, 0xf4, 0xf4],
-        '026': [0x02, 0x02, 0x02],
-        '226': [0xff, 0xff, 0x99],
-        '222': [0xee, 0x9d, 0xc3],
-        '212': [0x87, 0xc0, 0xea],
-        '037': [0x01, 0x96, 0x25],
-        '005': [0xd9, 0xbb, 0x7c],
-        '283': [0xf5, 0xc1, 0x89],
-        '208': [0xe4, 0xe4, 0xda],
-        '191': [0xf4, 0x9b, 0x01],
-        '124': [0x9c, 0x01, 0xc6],
-        '102': [0x48, 0x8c, 0xc6],
-        '135': [0x5f, 0x75, 0x8c],
-        '151': [0x60, 0x82, 0x66],
-        '138': [0x8d, 0x75, 0x53],
-        '038': [0xa8, 0x3e, 0x16],
-        '194': [0x9c, 0x92, 0x91],
-        '154': [0x80, 0x09, 0x1c],
-        '268': [0x2d, 0x16, 0x78],
-        '140': [0x01, 0x26, 0x42],
-        '141': [0x01, 0x35, 0x17],
-        '312': [0xaa, 0x7e, 0x56],
-        '199': [0x4d, 0x5e, 0x57],
-        '308': [0x31, 0x10, 0x07]
-        },
+// Salutation : palettes
+// Printer : palettes struct
+// Greet : This module contains the `lego` palette mappings.
+// CreateMessage : Color mapping source;
+// - http://www.brickjournal.com/files/PDFs/2010LEGOcolorpalette.pdf
+type palettes struct {
+}
 
-    'transparent': {
-        '044': [0xf9, 0xef, 0x69],
-        '182': [0xec, 0x76, 0x0e],
-        '047': [0xe7, 0x66, 0x48],
-        '041': [0xe0, 0x2a, 0x29],
-        '113': [0xee, 0x9d, 0xc3],
-        '126': [0x9c, 0x95, 0xc7],
-        '042': [0xb6, 0xe0, 0xea],
-        '043': [0x50, 0xb1, 0xe8],
-        '143': [0xce, 0xe3, 0xf6],
-        '048': [0x63, 0xb2, 0x6e],
-        '311': [0x99, 0xff, 0x66],
-        '049': [0xf1, 0xed, 0x5b],
-        '111': [0xa6, 0x91, 0x82],
-        '040': [0xee, 0xee, 0xee]
-        },
+// Color Mapping Source
+const LEGOS string = `{"solid":{"102":[72,140,198],"106":[231,100,25],"119":[149,185,12],"124":[156,1,198],"135":[95,117,140],"138":[141,117,83],"140":[1,38,66],"141":[1,53,23],"151":[96,130,102],"154":[128,9,28],"191":[244,155,1],"192":[92,29,13],"194":[156,146,145],"199":[77,94,87],"208":[228,228,218],"212":[135,192,234],"221":[222,56,139],"222":[238,157,195],"226":[255,255,153],"268":[45,22,120],"283":[245,193,137],"308":[49,16,7],"312":[170,126,86],"024":[254,196,1],"021":[222,1,14],"023":[1,88,168],"028":[1,124,41],"018":[214,115,65],"001":[244,244,244],"026":[2,2,2],"037":[1,150,37],"005":[217,187,124],"038":[168,62,22]},"transparent":{"111":[166,145,130],"113":[238,157,195],"126":[156,149,199],"143":[206,227,246],"182":[236,118,14],"311":[153,255,102],"044":[249,239,105],"047":[231,102,72],"041":[224,42,41],"042":[182,224,234],"043":[80,177,232],"048":[99,178,110],"049":[241,237,91],"040":[238,238,238]},"effects":{"131":[141,148,150],"148":[73,63,59],"294":[254,252,213],"297":[170,127,46]},"mono":{"001":[244,244,244],"026":[2,2,2]}}`
 
-    'effects': {
-        '131': [0x8d, 0x94, 0x96],
-        '297': [0xaa, 0x7f, 0x2e],
-        '148': [0x49, 0x3f, 0x3b],
-        '294': [0xfe, 0xfc, 0xd5]
-        },
-
-    'mono': {
-        '001': [0xf4, 0xf4, 0xf4],
-        '026': [0x02, 0x02, 0x02]
-        },
-    }`
-
-func ExtendPalette(palette []int, colors int, rgb int) []int {
+// Primate member functions
+func (p *palettes) extendPalette(palette []int, colors int, rgb int) []int {
 	if rgb == 0 {
 		rgb = 3
 	}
@@ -78,7 +27,6 @@ func ExtendPalette(palette []int, colors int, rgb int) []int {
 		colors = 256
 	}
 
-	// missingColors := colors - len(palette)
 	missingColors := 255
 	palette = append(palette)
 	if missingColors > 0 {
@@ -91,6 +39,27 @@ func ExtendPalette(palette []int, colors int, rgb int) []int {
 	}
 	return palette[:colors*rgb]
 
+}
+
+func (p *palettes) mergePalettes(palettes string) map[string]interface{} {
+	var result map[string]interface{}
+	err := json.Unmarshal([]byte(palettes), &result)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	unified := make(map[string]interface{})
+	for _, palettes := range result {
+		if pal, ok := palettes.(map[string]interface{}); ok {
+			for key, val := range pal {
+				unified[key] = val
+			}
+		} else {
+			log.Printf("record not a map[string]interface{} %s", pal)
+		}
+	}
+	result["all"] = unified
+	return result
 }
 
 func Palettes() {
