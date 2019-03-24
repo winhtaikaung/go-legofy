@@ -2,7 +2,6 @@ package legofy
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
@@ -62,6 +61,30 @@ func (p *palettes) mergePalettes(palettes string) map[string]interface{} {
 	return result
 }
 
-func Palettes() {
-	fmt.Println("hello")
+func (p *palettes) flattenPalettes(palettes string) map[string]interface{} {
+	mergedPalettes := p.mergePalettes(palettes)
+	unifiedPalettes := make(map[string]interface{})
+	for key, val := range mergedPalettes {
+		colList := make([]float64, 0)
+		if pal, ok := val.(map[string]interface{}); ok {
+			for _, colors := range pal {
+				if colorL, ok := colors.([]interface{}); ok {
+					for _, item := range colorL {
+						colList = append(colList, item.(float64))
+					}
+				} else {
+					log.Printf("record not a map[string]interface{} %s", colorL)
+				}
+
+			}
+		} else {
+			log.Printf("record not a map[string]interface{} %s", pal)
+		}
+		unifiedPalettes[key] = colList
+	}
+	return unifiedPalettes
+}
+
+func (p *palettes) legos() map[string]interface{} {
+	return p.flattenPalettes(LEGOS)
 }
