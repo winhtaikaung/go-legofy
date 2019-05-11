@@ -23,7 +23,7 @@ func main() {
 
 	imagePath := "assets/1x1.png"
 
-	sourceImagePath := "/Users/winhtaikaung/Downloads/bloom-blossom-dahlia-60597.jpg"
+	sourceImagePath := "lego.jpg"
 
 	file, err := os.Open(imagePath)
 	defer file.Close()

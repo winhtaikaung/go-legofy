@@ -79,7 +79,7 @@ func (l *legofy) getNewSize(baseImage image.Image, brickImg image.Image, size in
 			scale = float64(newImageSize.Max.X) / float64(scaleX)
 		}
 
-		return int(math.Round(float64(newImageSize.Max.X) / float64(scale))), int(math.Round(float64(newImageSize.Max.Y) / float64(scale)))
+		return int(math.Floor(float64(newImageSize.Max.X) / float64(scale))), int(math.Floor(float64(newImageSize.Max.Y) / float64(scale)))
 	}
 	return newImageSize.Max.X, newImageSize.Max.Y
 }
