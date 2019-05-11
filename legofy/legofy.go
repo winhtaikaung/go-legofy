@@ -16,8 +16,14 @@ func (l *legofy) applyColorOverlay() {
 
 }
 
-func (l *legofy) overLayeffect() {
-
+func (l *legofy) overLayeffect(color int, overlay int) int {
+	if color < 33 {
+		return overlay - 100
+	} else if color > 233 {
+		return overlay + 100
+	} else {
+		return overlay - 133 + color
+	}
 }
 
 func (l *legofy) makeLegoImage() {

@@ -13,6 +13,29 @@ func TestApplyThumbnNailEffects(t *testing.T) {
 	fmt.Println("Test ApplyThumbnail Pallette")
 }
 
+func TestOverLayEffect(t *testing.T) {
+	fmt.Println("Test OverLayEffect")
+	l := new(legofy)
+	effect := l.overLayeffect(0, 84)
+	if effect != -16 {
+		t.Log("Should equal with -16")
+		t.Fail()
+	}
+
+	effect = l.overLayeffect(234, 84)
+	if effect != 184 {
+		t.Log("Should equal with 184")
+		t.Fail()
+	}
+
+	effect = l.overLayeffect(52, 84)
+
+	if effect != 3 {
+		t.Log("Should equal with 3")
+		t.Fail()
+	}
+}
+
 func TestGetNewSize(t *testing.T) {
 	fmt.Println("Test GetNewSize")
 	l := new(legofy)
