@@ -6,7 +6,9 @@ import (
 )
 
 func TestGetLegoPallette(t *testing.T) {
-	fmt.Println("TestGel Logo Pallette")
+	l := new(legofy)
+	l.getLegoPalette("all")
+	
 }
 
 func TestApplyThumbnNailEffects(t *testing.T) {

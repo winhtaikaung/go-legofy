@@ -34,16 +34,27 @@ func (l *legofy) getNewFileName() {
 
 }
 
-func (l *legofy) getLegoPalette() {
+func (l *legofy) getLegoPalette(paletteMode string) []float64 {
+	p := new(palettes)
+	legos := p.legos()
+	palette := legos[paletteMode]
+	data := palette.([]float64)
+
+	return p.extendPalette(data, 0, 0)
 
 }
 
-func (l *legofy) applyThumbNailEffect() {
+func (l *legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64, dither bool) {
 
+	paletteImage := image.NewRGBA(image.Rect(0, 0, 1, 1))
+	fmt.Println(paletteImage)
 }
 
 func (l *legofy) legofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) {
 	// newScanner(sourceImg)
+	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
+	fmt.Println(newsizeX, newSizeY)
+
 }
 
 func (l *legofy) readImage(path string) image.Image {
