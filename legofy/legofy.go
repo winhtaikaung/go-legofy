@@ -7,6 +7,8 @@ import (
 	_ "image/png"
 	"math"
 	"os"
+
+	"github.com/BurntSushi/graphics-go/graphics"
 )
 
 type legofy struct {
@@ -26,8 +28,8 @@ func (l *legofy) overLayeffect(color int, overlay int) int {
 	}
 }
 
-func (l *legofy) makeLegoImage() {
-
+func (l *legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
+	//To implement legofy process
 }
 
 func (l *legofy) getNewFileName() {
@@ -50,10 +52,15 @@ func (l *legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func (l *legofy) legofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) {
-	// newScanner(sourceImg)
+func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) {
+	l := new(legofy)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
+	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
+	graphics.Thumbnail(thumbImg, sourceImg)
+
+	// Check Palette mode in Future
+	l.makeLegoImage(sourceImg, brickImg)
 
 }
 

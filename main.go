@@ -6,6 +6,8 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"os"
+
+	"./legofy"
 )
 
 func main() {
@@ -23,30 +25,22 @@ func main() {
 
 	imagePath := "assets/1x1.png"
 
-	sourceImagePath := "lego.jpg"
+	sourceImagePath := "legofy/graphic.jpg"
 
-	file, err := os.Open(imagePath)
-	defer file.Close()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-	}
+	brick, _ := os.Open(imagePath)
+	defer brick.Close()
 
-	brickImg, _, err := image.Decode(file) // Image Struct
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", imagePath, err)
-	}
+	brickImg, _, _ := image.Decode(brick) // Image Struct
+
 	fmt.Println("Width:", brickImg.Bounds().Max.X, "Height:", brickImg.Bounds().Max.Y)
 
-	sourceImgfile, err := os.Open(sourceImagePath)
-	defer sourceImgfile.Close()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-	}
+	source, _ := os.Open(sourceImagePath)
+	defer source.Close()
 
-	sourceImage, _, err := image.DecodeConfig(sourceImgfile) // Image Struct
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", sourceImagePath, err)
-	}
-	fmt.Println("Width:", sourceImage.Width, "Height:", sourceImage.Height)
+	sourceImg, _, _ := image.Decode(source) // Image Struct
 
+	fmt.Println("Width:", sourceImg.Bounds().Max.X, "Height:", sourceImg.Bounds().Max.Y)
+
+	// fmt.Println("Width:", sourceImg.Width, "Height:", sourceImg.Height)
+	legofy.LegofyImage(sourceImg, brickImg, 30, "none", false)
 }
