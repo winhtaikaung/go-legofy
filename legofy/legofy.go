@@ -3,7 +3,9 @@ package legofy
 import (
 	"fmt"
 	"image"
+	"image/color"
 	_ "image/jpeg"
+	"image/png"
 	_ "image/png"
 	"math"
 	"os"
@@ -30,6 +32,42 @@ func (l *legofy) overLayeffect(color int, overlay int) int {
 
 func (l *legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
 	//To implement legofy process
+	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
+	brickW, brickH := brickImg.Bounds().Max.X, brickImg.Bounds().Max.Y
+
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{baseW * brickW, baseH * brickH}
+
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+	//filling white
+	for y := 0; y < lowRight.Y; y++ {
+		for x := 0; x < lowRight.X; x++ {
+			img.Set(x, y, color.RGBA{180, 180, 250, 255})
+		}
+	}
+
+	for brickX := 0; brickX < baseW; brickX++ {
+		for brickY := 0; brickY < baseH; brickY++ {
+			baseImg.At(brickX, brickY).RGBA()
+			// apply color overlay Here
+		}
+	}
+
+	l.generateSample("graphic_lego.png", baseImg)
+
+}
+
+func (l *legofy) generateSample(name string, img image.Image) {
+
+	f, err := os.Create(name)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	err = png.Encode(f, img)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (l *legofy) getNewFileName() {
@@ -60,7 +98,8 @@ func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, pal
 	graphics.Thumbnail(thumbImg, sourceImg)
 
 	// Check Palette mode in Future
-	l.makeLegoImage(sourceImg, brickImg)
+	// l.makeLegoImage(sourceImg, brickImg)
+	l.makeLegoImage(thumbImg, brickImg)
 
 }
 
