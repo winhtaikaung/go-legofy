@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Lego My lovely Lego")
 
 	imagePath := "assets/1x1.png"
-	sourceImagePath := "legofy/graphic.png"
+	sourceImagePath := "legofy/black.jpg"
 	brick, _ := os.Open(imagePath)
 	defer brick.Close()
 	brickImg, _, _ := image.Decode(brick) // Image Struct

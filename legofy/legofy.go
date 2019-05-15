@@ -29,14 +29,14 @@ func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color,
 	draw.Draw(cimg, brickImg.Bounds(), brickImg, image.Point{}, draw.Src)
 	for y := 0; y < brickY; y++ {
 		for x := 0; x < brickX; x++ {
-			cimg.Set(x, y, color.RGBA64{uint16(overlayR), uint16(overlayG), uint16(overlayB), uint16(overlayA)})
+			cimg.Set(x, y, color.RGBA{uint8(overlayR), uint8(overlayG), uint8(overlayB), uint8(overlayA)})
 		}
 	}
 
 	return blender.Overlay(cimg, brickImg)
 }
 
-func (l *Legofy) overLayeffect(color int, overlay int) int {
+func (l *Legofy) overLayeffect(color uint8, overlay uint8) uint8 {
 	if color < 33 {
 		return overlay - 100
 	} else if color > 233 {
