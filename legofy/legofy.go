@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"image/jpeg"
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
@@ -16,6 +17,11 @@ import (
 )
 
 type Legofy struct {
+}
+
+type LegoImage struct {
+	Image      image.Image
+	BrickCount int
 }
 
 func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color, pixel int) *image.RGBA {
@@ -36,16 +42,16 @@ func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color,
 }
 
 func (l *Legofy) overLayeffect(color uint8) uint8 {
-	if color < 33 {
-		return 32
-	} else if color > 233 {
+	if color <= 33 {
+		return 33
+	} else if color >= 233 {
 		return 233
 	} else {
 		return color
 	}
 }
 
-func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
+func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) *LegoImage {
 	//To implement legofy process
 	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
 	brickW, brickH := brickImg.Bounds().Max.X, brickImg.Bounds().Max.Y
@@ -55,13 +61,13 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
 
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	// filling white
-	for y := 0; y < lowRight.Y; y++ {
-		for x := 0; x < lowRight.X; x++ {
-			img.Set(x, y, color.RGBA{255, 255, 255, 255})
-		}
-	}
+	// for y := 0; y < lowRight.Y; y++ {
+	// 	for x := 0; x < lowRight.X; x++ {
+	// 		img.Set(x, y, color.RGBA{255, 255, 255, 255})
+	// 	}
+	// }
 	// cimg := image.NewRGBA(brickImg.Bounds())
-
+	var i = 0
 	for brickX := 0; brickX < baseW; brickX++ {
 		for brickY := 0; brickY < baseH; brickY++ {
 			color := baseImg.At(brickX, brickY)
@@ -70,24 +76,56 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
 			draw.Draw(img, img.Bounds(), l.applyColorOverlay(brickImg, color, brickY), image.Point{-(brickX * brickW), -(brickY * brickH)}, draw.Src)
 			// apply color overlay Here
 			// fmt.Println(brickX*brickW, brickY*brickH)
+			i++
 		}
 	}
 
-	l.generateSample("graphic_lego.png", img)
+	return &LegoImage{img, i}
 
 }
 
-func (l *Legofy) generateSample(name string, img image.Image) {
+func SaveAsJPEG(name string, img image.Image, quality int) {
 
 	f, err := os.Create(name)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
+
+	// if fileFormat == PNG {
+
+	// 	err = png.Encode(f, img)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// }
+
+	var opt jpeg.Options
+	if opt.Quality = 100; quality <= 100 {
+		opt.Quality = quality
+	}
+	// ok, write out the data into the new JPEG file
+
+	err = jpeg.Encode(f, img, &opt) // put quality to 80%
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+}
+func SaveAsPNG(name string, img image.Image) {
+
+	f, err := os.Create(name)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
 	err = png.Encode(f, img)
 	if err != nil {
 		panic(err)
 	}
+
 }
 
 func (l *Legofy) getNewFileName() {
@@ -110,7 +148,7 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) {
+func AsyncLegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool, legChanel chan *LegoImage) *LegoImage {
 	l := new(Legofy)
 
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
@@ -119,8 +157,25 @@ func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, pal
 	graphics.Thumbnail(thumbImg, sourceImg)
 
 	// Check Palette mode in Future
-	// l.makeLegoImage(sourceImg, brickImg)
-	l.makeLegoImage(thumbImg, brickImg)
+	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
+
+	legChanel <- legolizedImg
+	return legolizedImg
+
+}
+
+func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) *LegoImage {
+	l := new(Legofy)
+
+	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
+	fmt.Println(newsizeX, newSizeY)
+	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
+	graphics.Thumbnail(thumbImg, sourceImg)
+
+	// Check Palette mode in Future
+	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
+
+	return legolizedImg
 
 }
 

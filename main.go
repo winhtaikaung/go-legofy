@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Lego My lovely Lego")
 
 	imagePath := "assets/1x1.png"
-	sourceImagePath := "legofy/profile.jpg"
+	sourceImagePath := "profile.jpg"
 	brick, _ := os.Open(imagePath)
 	defer brick.Close()
 	brickImg, _, _ := image.Decode(brick) // Image Struct
@@ -23,7 +23,19 @@ func main() {
 	defer source.Close()
 	sourceImg, _, _ := image.Decode(source) // Image Struct
 
-	legofy.LegofyImage(sourceImg, brickImg, 100, "none", false)
+	//Legofy with GoRoutine and channel
+	imgChanel := make(chan *legofy.LegoImage)
+	go legofy.AsyncLegofyImage(sourceImg, brickImg, 1000, "none", false, imgChanel)
+	fmt.Println("Routine Async in Progress")
+	img := <-imgChanel
+	close(imgChanel)
+	fmt.Println("Routine Async Done")
+	legofy.SaveAsJPEG("graphic_lego.jpg", img.Image, 20)
+
+	blkImg := legofy.LegofyImage(sourceImg, brickImg, 1000, "none", false)
+	fmt.Println("Routine Sync in Progress")
+	legofy.SaveAsJPEG("graphic_lego_sync.jpg", blkImg.Image, 20)
+	fmt.Println("Routine Sync in Done")
 
 	// image1, err := os.Open(sourceImagePath)
 	// if err != nil {
