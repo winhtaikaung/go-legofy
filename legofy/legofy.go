@@ -4,23 +4,39 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
 	"math"
 	"os"
 
+	"../blender"
+
 	"github.com/BurntSushi/graphics-go/graphics"
 )
 
-type legofy struct {
+type Legofy struct {
 }
 
-func (l *legofy) applyColorOverlay() {
+func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color, pixel int) *image.RGBA {
 
+	overlayR, overlayG, overlayB, overlayA := brickColor.RGBA()
+	brickY := brickImg.Bounds().Max.Y
+	brickX := brickImg.Bounds().Max.X
+
+	cimg := image.NewRGBA(brickImg.Bounds())
+	draw.Draw(cimg, brickImg.Bounds(), brickImg, image.Point{}, draw.Src)
+	for y := 0; y < brickY; y++ {
+		for x := 0; x < brickX; x++ {
+			cimg.Set(x, y, color.RGBA64{uint16(overlayR), uint16(overlayG), uint16(overlayB), uint16(overlayA)})
+		}
+	}
+
+	return blender.Overlay(cimg, brickImg)
 }
 
-func (l *legofy) overLayeffect(color int, overlay int) int {
+func (l *Legofy) overLayeffect(color int, overlay int) int {
 	if color < 33 {
 		return overlay - 100
 	} else if color > 233 {
@@ -30,7 +46,7 @@ func (l *legofy) overLayeffect(color int, overlay int) int {
 	}
 }
 
-func (l *legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
+func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
 	//To implement legofy process
 	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
 	brickW, brickH := brickImg.Bounds().Max.X, brickImg.Bounds().Max.Y
@@ -39,25 +55,30 @@ func (l *legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) {
 	lowRight := image.Point{baseW * brickW, baseH * brickH}
 
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
-	//filling white
+	// filling white
 	for y := 0; y < lowRight.Y; y++ {
 		for x := 0; x < lowRight.X; x++ {
-			img.Set(x, y, color.RGBA{180, 180, 250, 255})
+			img.Set(x, y, color.RGBA{255, 255, 255, 255})
 		}
 	}
+	// cimg := image.NewRGBA(brickImg.Bounds())
 
 	for brickX := 0; brickX < baseW; brickX++ {
 		for brickY := 0; brickY < baseH; brickY++ {
-			baseImg.At(brickX, brickY).RGBA()
+			color := baseImg.At(brickX, brickY)
+
+			// draw.Draw(img, brickImg.Bounds(), l.applyColorOverlay(brickImg, color), image.Point{, brickY * brickH}, draw.Over)
+			draw.Draw(img, img.Bounds(), l.applyColorOverlay(brickImg, color, brickY), image.Point{-(brickX * brickW), -(brickY * brickH)}, draw.Src)
 			// apply color overlay Here
+			// fmt.Println(brickX*brickW, brickY*brickH)
 		}
 	}
 
-	l.generateSample("graphic_lego.png", baseImg)
+	l.generateSample("graphic_lego.png", img)
 
 }
 
-func (l *legofy) generateSample(name string, img image.Image) {
+func (l *Legofy) generateSample(name string, img image.Image) {
 
 	f, err := os.Create(name)
 	if err != nil {
@@ -70,11 +91,11 @@ func (l *legofy) generateSample(name string, img image.Image) {
 	}
 }
 
-func (l *legofy) getNewFileName() {
+func (l *Legofy) getNewFileName() {
 
 }
 
-func (l *legofy) getLegoPalette(paletteMode string) []float64 {
+func (l *Legofy) getLegoPalette(paletteMode string) []float64 {
 	p := new(palettes)
 	legos := p.legos()
 	palette := legos[paletteMode]
@@ -84,14 +105,15 @@ func (l *legofy) getLegoPalette(paletteMode string) []float64 {
 
 }
 
-func (l *legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64, dither bool) {
+func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64, dither bool) {
 
 	paletteImage := image.NewRGBA(image.Rect(0, 0, 1, 1))
 	fmt.Println(paletteImage)
 }
 
 func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) {
-	l := new(legofy)
+	l := new(Legofy)
+
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
@@ -103,7 +125,7 @@ func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, pal
 
 }
 
-func (l *legofy) readImage(path string) image.Image {
+func (l *Legofy) readImage(path string) image.Image {
 	file, err := os.Open(path)
 	defer file.Close()
 	if err != nil {
@@ -118,7 +140,7 @@ func (l *legofy) readImage(path string) image.Image {
 	return img
 }
 
-func (l *legofy) getNewSize(baseImage image.Image, brickImg image.Image, size int) (int, int) {
+func (l *Legofy) getNewSize(baseImage image.Image, brickImg image.Image, size int) (int, int) {
 	newImageSize := baseImage.Bounds()
 	brickSize := brickImg.Bounds()
 	scaleX, scaleY := 0, 0
