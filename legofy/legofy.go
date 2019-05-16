@@ -91,19 +91,12 @@ func SaveAsJPEG(name string, img image.Image, quality int) {
 	}
 	defer f.Close()
 
-	// if fileFormat == PNG {
-
-	// 	err = png.Encode(f, img)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// }
-
 	var opt jpeg.Options
 	if opt.Quality = 100; quality <= 100 {
 		opt.Quality = quality
 	}
 	// ok, write out the data into the new JPEG file
+	// TODO file write should be able to selec
 
 	err = jpeg.Encode(f, img, &opt) // put quality to 80%
 	if err != nil {
@@ -147,9 +140,10 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
+func LegofyImage(imgsrc string, brickImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
 
 	l := new(Legofy)
+	sourceImg = l.readImage(imgsrc)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
