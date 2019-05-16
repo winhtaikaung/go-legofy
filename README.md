@@ -4,9 +4,9 @@
 
 Go Legofy is a Go lang utility library that takes a static image and makes it so that it looks as if it was built out of LEGO.
 
-<img alt="Before" title="Before (The inflorescence of Zoysia grass, a variety of lawn grass. Picture by Hari Krishnan)" height="500" src="go-legofy/gopher.png?raw=true">
+<img alt="Before" title="Before (The inflorescence of Zoysia grass, a variety of lawn grass. Picture by Hari Krishnan)" height="500" src="/go-legofy/gopher.png?raw=true">
 </a>
-<img alt="After" title="After" height="500" src="go-legofy/lego_with_img.png?raw=true">
+<img alt="After" title="After" height="500" src="/go-legofy/lego_with_img.png?raw=true">
 
 ### Bugs
 
