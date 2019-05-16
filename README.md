@@ -1,5 +1,7 @@
 # Go Legofy
 
+[![Build Status](https://travis-ci.org/winhtaikaung/go-legofy.svg?branch=master)](https://travis-ci.org/winhtaikaung/go-legofy)
+
 ### What is it?
 
 Go Legofy is a Go lang utility library that takes a static image and makes it so that it looks as if it was built out of LEGO.

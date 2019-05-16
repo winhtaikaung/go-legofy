@@ -14,3 +14,5 @@ golang.org/
 *.out
 
 .virtualgo
+.DS_Store
+.vscode/
