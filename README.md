@@ -7,7 +7,9 @@ Go Legofy is a Go lang utility library that takes a static image and makes it so
 ### Before
 
 <img alt="Before" title="Before (The inflorescence of Zoysia grass, a variety of lawn grass. Picture by Hari Krishnan)" height="500" src="gopher.png?raw=true">
-### After 
+
+### After
+
 <img alt="After" title="After" height="500" src="lego_with_img.png?raw=true">
 
 ## Quickstart
