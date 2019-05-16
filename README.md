@@ -22,7 +22,7 @@ $ go get github.com/winhtaikaung/go-legofy
 
 ```go
     //Legofy from image path
-	import (
+import (
 	"fmt"
 	"image"
 	_ "image/jpeg"
@@ -30,7 +30,7 @@ $ go get github.com/winhtaikaung/go-legofy
 	_ "image/png"
 	"os"
 
-	"./legofy"
+	"github.com/winhtaikaung/go-legofy/legofy"
 )
 
 func main() {

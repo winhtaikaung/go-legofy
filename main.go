@@ -8,7 +8,7 @@ import (
 	_ "image/png"
 	"os"
 
-	"./legofy"
+	"github.com/winhtaikaung/go-legofy/legofy"
 )
 
 func main() {
