@@ -30,9 +30,9 @@ notifications:
 # ...and adding this to your Gopkg.toml file.
 #   required = ["github.com/golangci/golangci-lint/cmd/golangci-lint"]
 before_script:
-  - go get https://github.com/winhtaikaung/go-legofy/legofy
+  - go get github.com/winhtaikaung/go-legofy/legofy
 install:
-  - go get https://github.com/winhtaikaung/go-legofy/legofy
+  - go get github.com/winhtaikaung/go-legofy/legofy
 
 # script always runs to completion (set +e). If we have linter issues AND a
 # failing test, we want to see both. Configure golangci-lint with a
