@@ -65,6 +65,9 @@ func main() {
 
 }
 ```
+## Docs
+
+https://godoc.org/github.com/winhtaikaung/go-legofy/legofy
 
 ## Bugs
 
