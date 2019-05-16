@@ -16,7 +16,7 @@ func main() {
 	//Legofy from image path
 	sourceImagePath := "gopher.png"
 	imgChanel := make(chan *legofy.LegoImage)
-	go legofy.LegofyImagePath(sourceImagePath, 50, imgChanel)
+	go legofy.LegofyImagePath(sourceImagePath, 30, imgChanel)
 	img := <-imgChanel
 	close(imgChanel)
 	fmt.Println(img.BrickCount)
@@ -27,7 +27,7 @@ func main() {
 	defer source.Close()
 	sourceImg, _, _ := image.Decode(source) // Image Struct
 	imgChanel = make(chan *legofy.LegoImage)
-	go legofy.LegofyImage(sourceImg, 50, imgChanel)
+	go legofy.LegofyImage(sourceImg, 30, imgChanel)
 	img = <-imgChanel
 	close(imgChanel)
 	legofy.SaveAsPNG("lego_with_img", img.Image, png.BestCompression)

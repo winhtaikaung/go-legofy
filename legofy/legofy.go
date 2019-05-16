@@ -21,11 +21,9 @@ import (
 type Legofy struct {
 }
 
-// Salutation : LegoImage
+// Salutation : "LegoImage"
 // Printer : lego image
 // Greet : This struct contains the lego image and number of 1x1 lego bricks.
-// CreateMessage : Color mapping source;
-// - http://www.brickjournal.com/files/PDFs/2010LEGOcolorpalette.pd
 type LegoImage struct {
 	Image      image.Image
 	BrickCount int
@@ -68,11 +66,11 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legCha
 
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	// filling white
-	// for y := 0; y < lowRight.Y; y++ {
-	// 	for x := 0; x < lowRight.X; x++ {
-	// 		img.Set(x, y, color.RGBA{255, 255, 255, 255})
-	// 	}
-	// }
+	for y := 0; y < lowRight.Y; y++ {
+		for x := 0; x < lowRight.X; x++ {
+			img.Set(x, y, color.RGBA{255, 255, 255, 255})
+		}
+	}
 	// cimg := image.NewRGBA(brickImg.Bounds())
 	var i = 0
 	for brickX := 0; brickX < baseW; brickX++ {
@@ -208,8 +206,8 @@ func LegofyImagePath(imgSrc string, brickSize int, legoChan chan *LegoImage) {
 	makerChan := make(chan *LegoImage)
 	go l.makeLegoImage(thumbImg, brickImg, makerChan)
 	legolizedImg := <-makerChan
-	close(makerChan)
 	legoChan <- legolizedImg
+	close(makerChan)
 
 }
 
@@ -223,7 +221,7 @@ func LegofyImage(sourceImg image.Image, brickSize int, legoChan chan *LegoImage)
 	makerChan := make(chan *LegoImage)
 	go l.makeLegoImage(thumbImg, brickImg, makerChan)
 	legolizedImg := <-makerChan
-	close(makerChan)
 	legoChan <- legolizedImg
+	close(makerChan)
 
 }
