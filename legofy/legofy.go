@@ -1,3 +1,5 @@
+// Package legofy provides legolized image
+// of user-defined static images (PNG,JPG)
 package legofy
 
 import (
@@ -20,7 +22,7 @@ import (
 
 type Legofy struct {
 }
-	
+
 // LegoImage
 // This struct contains the lego image and number of 1x1 lego bricks.
 type LegoImage struct {
@@ -28,7 +30,7 @@ type LegoImage struct {
 	BrickCount int
 }
 
-//This method will apply color overlay to lego bricks by each pixel
+// This method will apply color overlay to lego bricks by each pixel
 func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color, pixel int) *image.RGBA {
 
 	overlayR, overlayG, overlayB, overlayA := brickColor.RGBA()
@@ -46,7 +48,7 @@ func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color,
 	return blend.Overlay(cimg, brickImg)
 }
 
-//This method is to filter safe color
+// This method is to filter safe color
 func (l *Legofy) overLayeffect(color uint8) uint8 {
 	if color <= 33 {
 		return 33
