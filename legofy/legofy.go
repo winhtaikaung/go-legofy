@@ -9,6 +9,7 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
+	"log"
 	"math"
 	"os"
 
@@ -51,7 +52,7 @@ func (l *Legofy) overLayeffect(color uint8) uint8 {
 	}
 }
 
-func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) *LegoImage {
+func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legChanel chan *LegoImage) {
 	//To implement legofy process
 	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
 	brickW, brickH := brickImg.Bounds().Max.X, brickImg.Bounds().Max.Y
@@ -79,8 +80,7 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) *LegoI
 			i++
 		}
 	}
-
-	return &LegoImage{img, i}
+	legChanel <- &LegoImage{img, i}
 
 }
 
@@ -92,19 +92,12 @@ func SaveAsJPEG(name string, img image.Image, quality int) {
 	}
 	defer f.Close()
 
-	// if fileFormat == PNG {
-
-	// 	err = png.Encode(f, img)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// }
-
 	var opt jpeg.Options
 	if opt.Quality = 100; quality <= 100 {
 		opt.Quality = quality
 	}
 	// ok, write out the data into the new JPEG file
+	// TODO file write should be able to selec
 
 	err = jpeg.Encode(f, img, &opt) // put quality to 80%
 	if err != nil {
@@ -148,50 +141,35 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func AsyncLegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool, legChanel chan *LegoImage) *LegoImage {
+func LegofyImage(imgSrc string, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
+	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
+	sourceImg := l.readImage(imgSrc)
 
+	brickImg := l.readImage(imagePath)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
 	graphics.Thumbnail(thumbImg, sourceImg)
 
 	// Check Palette mode in Future
-	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
-
-	legChanel <- legolizedImg
-	return legolizedImg
-
-}
-
-func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) *LegoImage {
-	l := new(Legofy)
-
-	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
-	fmt.Println(newsizeX, newSizeY)
-	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
-	graphics.Thumbnail(thumbImg, sourceImg)
-
-	// Check Palette mode in Future
-	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
-
-	return legolizedImg
+	makerChan := make(chan *LegoImage)
+	go l.makeLegoImage(thumbImg, brickImg, makerChan)
+	legolizedImg := <-makerChan
+	close(makerChan)
+	legoChan <- legolizedImg
 
 }
 
 func (l *Legofy) readImage(path string) image.Image {
-	file, err := os.Open(path)
-	defer file.Close()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
+	source, _ := os.Open(path)
+	defer source.Close()
+	sourceImg, _, decodErr := image.Decode(source)
+	if decodErr != nil {
+		log.Fatalf("failed to open: %s", decodErr)
+		panic(decodErr)
 	}
-
-	img, _, err := image.Decode(file) // Image Struct
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
-	}
-
-	return img
+	return sourceImg
 }
 
 func (l *Legofy) getNewSize(baseImage image.Image, brickImg image.Image, size int) (int, int) {
