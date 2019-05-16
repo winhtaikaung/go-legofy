@@ -9,6 +9,7 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
+	"log"
 	"math"
 	"os"
 
@@ -140,10 +141,12 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func LegofyImage(imgsrc string, brickImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
-
+func LegofyImage(imgSrc string, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
+	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
-	sourceImg := l.readImage(imgsrc)
+	sourceImg := l.readImage(imgSrc)
+
+	brickImg := l.readImage(imagePath)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
@@ -159,18 +162,14 @@ func LegofyImage(imgsrc string, brickImg image.Image, brickSize int, palette str
 }
 
 func (l *Legofy) readImage(path string) image.Image {
-	file, err := os.Open(path)
-	defer file.Close()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
+	source, _ := os.Open(path)
+	defer source.Close()
+	sourceImg, _, decodErr := image.Decode(source)
+	if decodErr != nil {
+		log.Fatalf("failed to open: %s", decodErr)
+		panic(decodErr)
 	}
-
-	img, _, err := image.Decode(file) // Image Struct
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
-	}
-
-	return img
+	return sourceImg
 }
 
 func (l *Legofy) getNewSize(baseImage image.Image, brickImg image.Image, size int) (int, int) {
