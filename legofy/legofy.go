@@ -195,7 +195,7 @@ func SaveAsPNG(name string, img image.Image, compresLvl png.CompressionLevel) {
 
 }
 
-func LegofyImagePath(imgSrc string, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
+func LegofyImagePath(imgSrc string, brickSize int, legoChan chan *LegoImage) {
 	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
 	sourceImg := l.readImage(imgSrc)
@@ -213,7 +213,7 @@ func LegofyImagePath(imgSrc string, brickSize int, palette string, dither bool, 
 
 }
 
-func LegofyImage(sourceImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
+func LegofyImage(sourceImg image.Image, brickSize int, legoChan chan *LegoImage) {
 	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
 	brickImg := l.readImage(imagePath)
