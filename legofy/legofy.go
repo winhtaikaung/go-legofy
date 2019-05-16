@@ -51,7 +51,7 @@ func (l *Legofy) overLayeffect(color uint8) uint8 {
 	}
 }
 
-func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) *LegoImage {
+func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legChanel chan *LegoImage) {
 	//To implement legofy process
 	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
 	brickW, brickH := brickImg.Bounds().Max.X, brickImg.Bounds().Max.Y
@@ -79,8 +79,7 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image) *LegoI
 			i++
 		}
 	}
-
-	return &LegoImage{img, i}
+	legChanel <- &LegoImage{img, i}
 
 }
 
@@ -148,34 +147,20 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 	fmt.Println(paletteImage)
 }
 
-func AsyncLegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool, legChanel chan *LegoImage) *LegoImage {
-	l := new(Legofy)
+func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
 
+	l := new(Legofy)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
 	graphics.Thumbnail(thumbImg, sourceImg)
 
 	// Check Palette mode in Future
-	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
-
-	legChanel <- legolizedImg
-	return legolizedImg
-
-}
-
-func LegofyImage(sourceImg image.Image, brickImg image.Image, brickSize int, palette string, dither bool) *LegoImage {
-	l := new(Legofy)
-
-	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
-	fmt.Println(newsizeX, newSizeY)
-	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
-	graphics.Thumbnail(thumbImg, sourceImg)
-
-	// Check Palette mode in Future
-	legolizedImg := l.makeLegoImage(thumbImg, brickImg)
-
-	return legolizedImg
+	makerChan := make(chan *LegoImage)
+	go l.makeLegoImage(thumbImg, brickImg, makerChan)
+	legolizedImg := <-makerChan
+	close(makerChan)
+	legoChan <- legolizedImg
 
 }
 
