@@ -25,12 +25,12 @@ func main() {
 
 	//Legofy with GoRoutine and channel
 	imgChanel := make(chan *legofy.LegoImage)
-	go legofy.LegofyImage(sourceImg, brickImg, 50, "none", false, imgChanel)
+	go legofy.LegofyImage(sourceImg, brickImg, 200, "none", false, imgChanel)
 	fmt.Println("Routine Async in Progress")
 	img := <-imgChanel
 	close(imgChanel)
 	fmt.Println("Routine Async Done")
-	legofy.SaveAsJPEG("graphic_lego.jpg", img.Image, 20)
+	legofy.SaveAsJPEG("graphic_lego.jpg", img.Image, 80)
 
 	// blkImg := legofy.LegofyImage(sourceImg, brickImg, 1000, "none", false)
 	// fmt.Println("Routine Sync in Progress")
