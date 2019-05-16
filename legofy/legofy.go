@@ -20,7 +20,7 @@ import (
 
 type Legofy struct {
 }
-
+	
 // LegoImage
 // This struct contains the lego image and number of 1x1 lego bricks.
 type LegoImage struct {
