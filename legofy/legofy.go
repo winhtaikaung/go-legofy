@@ -21,14 +21,15 @@ import (
 type Legofy struct {
 }
 
-// Salutation : "LegoImage"
-// Printer : lego image
-// Greet : This struct contains the lego image and number of 1x1 lego bricks.
+// LegoImage
+// lego image
+// This struct contains the lego image and number of 1x1 lego bricks.
 type LegoImage struct {
 	Image      image.Image
 	BrickCount int
 }
 
+//This method will apply color overlay to lego bricks by each pixel
 func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color, pixel int) *image.RGBA {
 
 	overlayR, overlayG, overlayB, overlayA := brickColor.RGBA()
@@ -46,6 +47,7 @@ func (l *Legofy) applyColorOverlay(brickImg image.Image, brickColor color.Color,
 	return blend.Overlay(cimg, brickImg)
 }
 
+//This method is to filter safe color
 func (l *Legofy) overLayeffect(color uint8) uint8 {
 	if color <= 33 {
 		return 33
@@ -56,6 +58,8 @@ func (l *Legofy) overLayeffect(color uint8) uint8 {
 	}
 }
 
+// This method will  redraw the original image with
+// legolized image by each bricks Bound X & Y and return actual number of 1x1 bricks to build with real lego
 func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legChanel chan *LegoImage) {
 	//To implement legofy process
 	baseW, baseH := baseImg.Bounds().Max.X, baseImg.Bounds().Max.Y
@@ -71,16 +75,12 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legCha
 			img.Set(x, y, color.RGBA{255, 255, 255, 255})
 		}
 	}
-	// cimg := image.NewRGBA(brickImg.Bounds())
+
 	var i = 0
 	for brickX := 0; brickX < baseW; brickX++ {
 		for brickY := 0; brickY < baseH; brickY++ {
 			color := baseImg.At(brickX, brickY)
-
-			// draw.Draw(img, brickImg.Bounds(), l.applyColorOverlay(brickImg, color), image.Point{, brickY * brickH}, draw.Over)
 			draw.Draw(img, img.Bounds(), l.applyColorOverlay(brickImg, color, brickY), image.Point{-(brickX * brickW), -(brickY * brickH)}, draw.Src)
-			// apply color overlay Here
-			// fmt.Println(brickX*brickW, brickY*brickH)
 			i++
 		}
 	}
@@ -88,15 +88,16 @@ func (l *Legofy) makeLegoImage(baseImg image.Image, brickImg image.Image, legCha
 
 }
 
+// This method resize the thumbnail version of original image to produce legolized image
 func (l *Legofy) generateThumbNail(sourceImg image.Image, brickImg image.Image, brickSize int) image.Image {
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
-	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
 	graphics.Thumbnail(thumbImg, sourceImg)
 	return thumbImg
 
 }
 
+// This method will read the image from path
 func (l *Legofy) readImage(path string) image.Image {
 	source, _ := os.Open(path)
 	defer source.Close()
@@ -108,6 +109,7 @@ func (l *Legofy) readImage(path string) image.Image {
 	return sourceImg
 }
 
+// This method will calculate new size
 func (l *Legofy) getNewSize(baseImage image.Image, brickImg image.Image, size int) (int, int) {
 	newImageSize := baseImage.Bounds()
 	brickSize := brickImg.Bounds()
@@ -131,16 +133,6 @@ func (l *Legofy) getNewSize(baseImage image.Image, brickImg image.Image, size in
 	return newImageSize.Max.X, newImageSize.Max.Y
 }
 
-func (l *Legofy) getLegoPalette(paletteMode string) []float64 {
-	p := new(palettes)
-	legos := p.legos()
-	palette := legos[paletteMode]
-	data := palette.([]float64)
-
-	return p.extendPalette(data, 0, 0)
-
-}
-
 func (l *Legofy) getNewFileName() string {
 	id, err := uuid.NewUUID()
 	if err != nil {
@@ -149,6 +141,7 @@ func (l *Legofy) getNewFileName() string {
 	return id.String()
 }
 
+// This method will save the resulting legolized image is JPEG format
 func SaveAsJPEG(name string, img image.Image, quality int) {
 	l := new(Legofy)
 	if name == "" {
@@ -174,6 +167,8 @@ func SaveAsJPEG(name string, img image.Image, quality int) {
 	}
 
 }
+
+// This method will save the resulting legolized image is PNG format
 func SaveAsPNG(name string, img image.Image, compresLvl png.CompressionLevel) {
 	l := new(Legofy)
 	if name == "" {
@@ -193,6 +188,7 @@ func SaveAsPNG(name string, img image.Image, compresLvl png.CompressionLevel) {
 
 }
 
+// This method will legolize image from path
 func LegofyImagePath(imgSrc string, brickSize int, legoChan chan *LegoImage) {
 	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
@@ -211,6 +207,7 @@ func LegofyImagePath(imgSrc string, brickSize int, legoChan chan *LegoImage) {
 
 }
 
+// This method will legolize image from image.Image
 func LegofyImage(sourceImg image.Image, brickSize int, legoChan chan *LegoImage) {
 	imagePath := "./assets/1x1.png"
 	l := new(Legofy)
