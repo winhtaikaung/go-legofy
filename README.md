@@ -2,6 +2,13 @@
 
 [![Build Status](https://travis-ci.org/winhtaikaung/go-legofy.svg?branch=master)](https://travis-ci.org/winhtaikaung/go-legofy)
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/winhtaikaung/go-legofy)](https://goreportcard.com/report/github.com/winhtaikaung/go-legofy)
+
+[![GitHub issues](https://img.shields.io/github/issues/winhtaikaung/go-legofy.svg)](https://github.com/winhtaikaung/go-legofy/issues)
+[![GitHub forks](https://img.shields.io/github/forks/winhtaikaung/go-legofy.svg)](https://github.com/winhtaikaung/go-legofy/network)
+[![GitHub stars](https://img.shields.io/github/stars/winhtaikaung/go-legofy.svg)](https://github.com/winhtaikaung/go-legofy/stargazers)
+[![GitHub license](https://img.shields.io/github/license/winhtaikaung/go-legofy.svg)](https://github.com/winhtaikaung/go-legofy/blob/master/LICENSE.md)
+
 ### What is it?
 
 Go Legofy is a Go lang utility library that takes a static image and makes it so that it looks as if it was built out of LEGO.
@@ -85,3 +92,5 @@ If you find a bug:
 ## License
 
 MIT
+
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/winhtaikaung/go-legofy.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fwinhtaikaung%2Fgo-legofy)
