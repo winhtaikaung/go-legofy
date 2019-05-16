@@ -143,7 +143,7 @@ func (l *Legofy) applyThumbNailEffect(baseImage image.Image, palettes []float64,
 func LegofyImage(imgsrc string, brickImg image.Image, brickSize int, palette string, dither bool, legoChan chan *LegoImage) {
 
 	l := new(Legofy)
-	sourceImg = l.readImage(imgsrc)
+	sourceImg := l.readImage(imgsrc)
 	newsizeX, newSizeY := l.getNewSize(sourceImg, brickImg, brickSize)
 	fmt.Println(newsizeX, newSizeY)
 	thumbImg := image.NewRGBA(image.Rect(0, 0, newsizeX, newSizeY))
