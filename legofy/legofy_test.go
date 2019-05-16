@@ -5,64 +5,45 @@ import (
 	"testing"
 )
 
-func TestGetLegoPallette(t *testing.T) {
-	l := new(legofy)
-	l.getLegoPalette("all")
-	
-}
-
-func TestApplyThumbnNailEffects(t *testing.T) {
-	fmt.Println("Test ApplyThumbnail Pallette")
-}
-
 func TestOverLayEffect(t *testing.T) {
 	fmt.Println("Test OverLayEffect")
-	l := new(legofy)
-	effect := l.overLayeffect(0, 84)
-	if effect != -16 {
+	l := new(Legofy)
+	effect := l.overLayeffect(255)
+	if effect != 233 {
 		t.Log("Should equal with -16")
 		t.Fail()
 	}
-
-	effect = l.overLayeffect(234, 84)
-	if effect != 184 {
-		t.Log("Should equal with 184")
+	effect = l.overLayeffect(0)
+	if effect != 33 {
+		t.Log("Should equal with 33")
 		t.Fail()
 	}
 
-	effect = l.overLayeffect(52, 84)
-
-	if effect != 3 {
-		t.Log("Should equal with 3")
-		t.Fail()
-	}
 }
 
 func TestGetNewSize(t *testing.T) {
 	fmt.Println("Test GetNewSize")
-	l := new(legofy)
+	l := new(Legofy)
 	brickImg := l.readImage("../assets/1x1.png")
-	baseImg := l.readImage("graphic.jpg")
+	baseImg := l.readImage("../assets/flower.jpg")
 	x, y := l.getNewSize(baseImg, brickImg, 30)
-	if x != 30 {
-		t.Log("Should match with 30")
+
+	if x != 19 {
+		t.Log("X Should match with 19")
 		t.Fail()
 	}
-	if y != 22 {
-		t.Log("Y Should match with 22")
+	if y != 29 {
+		t.Log("Y Should match with 29")
 		t.Fail()
 	}
 
-	x, y = l.getNewSize(baseImg, brickImg, 200)
-	if x != 200 {
-		t.Log("Should match with 200")
-		t.Fail()
-	}
-	if y != 150 {
-		t.Log("Y Should match with 150")
-		t.Fail()
-	}
-}
-func TestLegofyImage(*testing.T) {
-	fmt.Println("TestLegofyImage")
+	// x, y = l.getNewSize(baseImg, brickImg, 200)
+	// if x != 200 {
+	// 	t.Log("Should match with 200")
+	// 	t.Fail()
+	// }
+	// if y != 150 {
+	// 	t.Log("Y Should match with 150")
+	// 	t.Fail()
+	// }
 }

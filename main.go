@@ -2,32 +2,38 @@ package main
 
 import (
 	"fmt"
+	"image"
 	_ "image/jpeg"
+	"image/png"
 	_ "image/png"
+	"os"
 
 	"./legofy"
 )
 
 func main() {
 	fmt.Println("Lego My lovely Lego")
-
-	// imagePath := "assets/1x1.png"
-	sourceImagePath := "./legofy/flower.jpg"
-	// brick, _ := os.Open(imagePath)
-	// defer brick.Close()
-	// brickImg, _, _ := image.Decode(brick) // Image Struct
-
-	// source, _ := os.Open(sourceImagePath)
-	// defer source.Close()
-	// sourceImg, _, _ := image.Decode(source) // Image Struct
-
-	//Legofy with GoRoutine and channel
+	//Legofy from image path
+	sourceImagePath := "gopher.png"
 	imgChanel := make(chan *legofy.LegoImage)
-	go legofy.LegofyImage(sourceImagePath, 200, "none", false, imgChanel)
+	go legofy.LegofyImagePath(sourceImagePath, 50, "none", false, imgChanel)
+
 	fmt.Println("Routine Async in Progress")
 	img := <-imgChanel
 	close(imgChanel)
 	fmt.Println("Routine Async Done")
-	legofy.SaveAsJPEG("graphic_lego.jpg", img.Image, 80)
+	fmt.Println(img.BrickCount)
+	legofy.SaveAsJPEG("lego_with_path", img.Image, 100)
+
+	// legofy from image.Image data type
+	source, _ := os.Open(sourceImagePath)
+	defer source.Close()
+	sourceImg, _, _ := image.Decode(source) // Image Struct
+	imgChanel = make(chan *legofy.LegoImage)
+	go legofy.LegofyImage(sourceImg, 50, "none", false, imgChanel)
+
+	img = <-imgChanel
+	close(imgChanel)
+	legofy.SaveAsPNG("lego_with_img", img.Image, png.BestCompression)
 
 }
